@@ -1,0 +1,7 @@
+*.o
+__pycache__/
+*.res
+*.dproj.local
+*.identcache
+__history/
+__recovery/
