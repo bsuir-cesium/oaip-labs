@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BorlandProject>
+	<Transactions>
+    <Transaction>1899.12.30 00:00:00.000.277,D:\УНИВЕР\Лабораторные ОаИП\oaip-2-7\Unit1.pas=D:\УНИВЕР\Лабораторные ОаИП\oaip-2-7\task2.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.828,=D:\УНИВЕР\Лабораторные ОаИП\oaip-2-7\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.407,=D:\УНИВЕР\Лабораторные ОаИП\oaip-2-7\Unit1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.378,D:\УНИВЕР\Лабораторные ОаИП\oaip-2-7\Unit1.pas=D:\УНИВЕР\Лабораторные ОаИП\oaip-2-7\task1.pas</Transaction>
+    <Transaction>1899.12.30 00:00:00.000.765,D:\programming\Delphi\Project2.dproj=D:\УНИВЕР\Лабораторные ОаИП\oaip-2-7\main.dproj</Transaction>
+  </Transactions>
+</BorlandProject>

@@ -1,0 +1,113 @@
+﻿unit task2;
+
+interface
+
+procedure Solve;
+
+implementation
+
+uses
+  System.SysUtils;
+
+type
+  TSet = set of Char;
+
+var
+  InputStr: AnsiString;
+  Pos: Integer;
+
+procedure SkipSpaces;
+begin
+  while (Pos <= Length(InputStr)) and (InputStr[Pos] = ' ') do
+    Inc(Pos);
+end;
+
+function IsInSet(const S: Char; const AllowedSet: TSet): Boolean;
+begin
+  Result := (Pos <= Length(InputStr)) and (InputStr[Pos] in AllowedSet);
+end;
+
+function CheckInteger(const Digits: TSet): Boolean;
+begin
+  if not (InputStr[Pos] in Digits) then Exit(False);
+  while (InputStr[Pos] in Digits) do Inc(Pos);
+  Result := True;
+end;
+
+function CheckName(const Letters, Digits: TSet): Boolean;
+begin
+  if not (InputStr[Pos] in Letters) then Exit(False);
+  Inc(Pos);
+  while (InputStr[Pos] in Letters) or (InputStr[Pos] in Digits) do
+    Inc(Pos);
+  Result := True;
+end;
+
+function CheckTerm(const Letters, Digits: TSet): Boolean;
+var
+  OldPos: Integer;
+begin
+  OldPos := Pos;
+  if CheckName(Letters, Digits) then Exit(True);
+  Pos := OldPos;
+  if CheckInteger(Digits) then Exit(True);
+  Result := False;
+end;
+
+function CheckFormula(const Letters, Digits, Signs: TSet): Boolean;
+var
+  OldPos: Integer;
+begin
+  // Вариант 1: Терм
+  OldPos := Pos;
+  if CheckTerm(Letters, Digits) then Exit(True);
+  Pos := OldPos;
+
+  // Вариант 2: (Формула Знак Формула)
+  if (Pos > Length(InputStr)) or (InputStr[Pos] <> '(') then Exit(False);
+  Inc(Pos);
+  SkipSpaces;
+
+  if not CheckFormula(Letters, Digits, Signs) then Exit(False);
+  SkipSpaces;
+
+  if not (InputStr[Pos] in Signs) then Exit(False);
+  Inc(Pos);
+  SkipSpaces;
+
+  if not CheckFormula(Letters, Digits, Signs) then Exit(False);
+  SkipSpaces;
+
+  if (Pos > Length(InputStr)) or (InputStr[Pos] <> ')') then Exit(False);
+  Inc(Pos);
+  Result := True;
+end;
+
+procedure Solve;
+var
+  Letters, Digits, Signs: TSet;
+begin
+  Letters := ['а','б','в','г','д','е','ж'];
+  Digits := ['1','2','3','4','5','6','7','8','9'];
+  Signs := ['+','-','*'];
+
+  Writeln('Введите формулу (завершите точкой):');
+  Readln(InputStr);
+
+  if (InputStr = '') or (InputStr[Length(InputStr)] <> '.') then
+  begin
+    Writeln('Ошибка: формула должна заканчиваться точкой');
+    Exit;
+  end;
+
+  Delete(InputStr, Length(InputStr), 1);
+  Pos := 1;
+  SkipSpaces;
+
+  if CheckFormula(Letters, Digits, Signs) and (Pos > Length(InputStr)) then
+    Writeln('Формула корректна')
+  else
+    Writeln('Формула некорректна');
+end;
+
+end.

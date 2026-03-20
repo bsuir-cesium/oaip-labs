@@ -1,0 +1,130 @@
+﻿unit task2;
+
+interface
+
+procedure Solve;
+
+implementation
+
+uses
+  System.SysUtils;
+
+type
+  TChar = AnsiChar;
+  TString = UnicodeString;
+  TSet = set of TChar;
+const
+  // Константные множества для букв, цифр и операторов
+  Letters: TSet = ['а', 'б', 'в', 'г', 'д', 'е', 'ж'];
+  Digits: TSet = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+  Operators: TSet = ['+', '-', '*'];
+
+  // Функция для парсинга <Целое>
+function ParseWhole(const S: TString; var Pos: Integer): Boolean;
+begin
+  Result := False;
+  // Должно начинаться с цифры
+  if (Pos <= Length(S)) and (S[Pos] in Digits) then
+  begin
+    Inc(Pos); // Пропускаем первую цифру
+    // Пропускаем ноль или более цифр
+    while (Pos <= Length(S)) and (S[Pos] in Digits) do
+      Inc(Pos);
+    Result := True;
+  end;
+end;
+
+// Функция для парсинга <Знак>
+function ParseSign(const S: TString; var Pos: Integer): Boolean;
+begin
+  Result := False;
+  // Должно быть одним из операторов
+  if (Pos <= Length(S)) and CharInSet(AnsiChar(S[Pos]), Operators) then
+  begin
+    Inc(Pos); // Пропускаем оператор
+    Result := True;
+  end;
+end;
+
+// Функция для парсинга <Имя>
+function ParseName(const S: TString; var Pos: Integer): Boolean;
+begin
+  Result := False;
+  // Должно начинаться с буквы
+  if (Pos <= Length(S)) and CharInSet(AnsiChar(S[Pos]), Letters) then
+  begin
+    Inc(Pos); // Пропускаем первую букву
+    // Пропускаем ноль или более букв или цифр
+    while (Pos <= Length(S)) and CharInSet(AnsiChar(S[Pos]), Letters + Digits) do
+      Inc(Pos);
+    Result := True;
+  end;
+end;
+
+// Функция для парсинга <Терм>
+function ParseTerm(const S: TString; var Pos: Integer): Boolean;
+begin
+  // Проверяем, начинается ли с буквы (<Имя>)
+  if (Pos <= Length(S)) and CharInSet(AnsiChar(S[Pos]), Letters) then
+    Result := ParseName(S, Pos)
+    // Проверяем, начинается ли с цифры (<Целое>)
+  else if (Pos <= Length(S)) and CharInSet(AnsiChar(S[Pos]), Digits) then
+    Result := ParseWhole(S, Pos)
+  else
+    Result := False;
+end;
+
+// Функция для парсинга <Формула>
+function ParseFormula(const S: TString; var Pos: Integer): Boolean;
+begin
+  Result := False;
+  // Проверяем, начинается ли с '('
+  if (Pos <= Length(S)) and (AnsiChar(S[Pos]) = '(') then
+  begin
+    Inc(Pos); // Пропускаем '('
+    // Рекурсивно парсим первую <Формула>
+    if not ParseFormula(S, Pos) then
+      Exit;
+    // Парсим <Знак>
+    if not ParseSign(S, Pos) then
+      Exit;
+    // Рекурсивно парсим вторую <Формула>
+    if not ParseFormula(S, Pos) then
+      Exit;
+    // Проверяем наличие закрывающей ')'
+    if (Pos > Length(S)) or (AnsiChar(S[Pos]) <> ')') then
+      Exit;
+    Inc(Pos); // Пропускаем ')'
+    Result := True;
+  end
+  else
+  begin
+    // Должно быть <Терм>
+    Result := ParseTerm(S, Pos);
+  end;
+end;
+
+// Основная процедура для решения задачи
+procedure Solve;
+var
+  Input: TString;
+  Formula: TString;
+  Pos: Integer;
+begin
+  Write('Введите формулу: ');
+  Readln(Input);
+  // Удаляем завершающую точку, если она есть
+  if (Length(Input) > 0) and (Input[Length(Input)] = '.') then
+    Formula := Copy(Input, 1, Length(Input) - 1)
+  else
+    Formula := Input;
+  // Инициализируем позицию
+  Pos := 1;
+  // Проверяем, соответствует ли вся строка <Формула>
+  if ParseFormula(Formula, Pos) and (Pos > Length(Formula)) then
+    Writeln('Да')
+  else
+    Writeln('Нет');
+end;
+
+end.

@@ -1,0 +1,59 @@
+﻿unit task1;
+
+interface
+
+procedure Solve;
+
+implementation
+
+uses
+  SysUtils;
+
+{$APPTYPE CONSOLE}
+
+type
+  TCharSet = Set of Char;
+  TString = AnsiString;
+
+const
+  VOWELS = ['а', 'е', 'и', 'о', 'у', 'ы', 'э', 'ю', 'я'];
+
+procedure Solve();
+Var
+  FirstSet, SecondSet: TCharSet;
+  Input, Words: TString;
+  i, k: Integer;
+begin
+  i := 1;
+  k := 1;
+  FirstSet := [];
+  SecondSet := [];
+  Write('Введите слова: ');
+  Readln(Input);
+  while Input[i] <> '.' do
+  begin
+    Words := Words + Input[i];
+    if (Input[i] in VOWELS) and (Input[i] in FirstSet) and
+      ((Pos(Input[i], Words) + k) = i) then
+    begin
+      Include(SecondSet, AnsiChar(Input[i]));
+    end;
+    if (Input[i] in VOWELS) and not(Input[i] in FirstSet) then
+    begin
+      Include(FirstSet, AnsiChar(Input[i]));
+    end;
+    if (Input[i] = ',') then
+    begin
+      k := i;
+      Words := '';
+    end;
+    Inc(i);
+  end;
+  Write('Гласные в нескольких словах: ');
+  for i := 0 to 255 do
+    if AnsiChar(i) in SecondSet then
+      Write(AnsiChar(i) + ';');
+  writeln;
+end;
+
+end.
